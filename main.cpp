@@ -85,6 +85,7 @@ struct Gym
     double mSubscriptionPrice = 29.99;
     std::string mPersonalTrainerName = "Fred";
     double mNumDailyPeople = 45.5;
+    int gymCounter = 1;
     
     Gym();
     ~Gym();
@@ -110,6 +111,7 @@ struct Gym
     void setPersonalTrainer(std::string personalTrainerName, float sessionLength = 2.5f, double sessionTime = 1000);
     double getUserFreq(double numDailyPeople, int numDays = 30);
     void checkIncome(double numDailyPeople, int numDays, double subscriptionPrice);
+    void printUserFreq();
 };
 
 Gym::Gym()
@@ -162,11 +164,15 @@ void Gym::checkIncome(double numDailyPeople, int numDays, double subscriptionPri
     }
 }
 
+void Gym::printUserFreq()
+{
+    std::cout << "average user number is: " << this->getUserFreq(45, 30) << ", today there were: " << this->mNumDailyPeople << "\n";
+}
+
 void Gym::Member::punchPass(int passesRemaining)
 {
-    passesLeft -= 1;
-    passesRemaining = passesLeft;
-    std::cout << "you have " << passesRemaining << " passes left!\n";
+    this->passesLeft = passesRemaining -= 1;
+    std::cout << "you have " << this->passesLeft << " passes left!\n";
 }
 
 bool Gym::Member::bringAFriend(bool hasFriendPass, int friendPassType)
@@ -222,11 +228,14 @@ struct Piano
     double pianoSize = 20.80;
     std::string brandName = "Yamaha";
     int totalNumPedals = 3;
+    int numKey = 40;
+    double playTime = 42.25;
+    double notePlayed;
 
     Piano();
     ~Piano();
 
-    double playNote(int numKey, double playTime = 45.0);
+    double playNote(int mNumKey, double mPlayTime = 45.0);
     int muteNote(bool playOrMute = false, bool stringPadOn = true);
     void volumeDown(bool quietMode = true, int numPedal = 2);
     void arpeggio(int keyNum, int range, int interval);
@@ -242,7 +251,7 @@ Piano::~Piano()
     std::cout << "Piano Deconstructed \n";
 }
 
-double Piano::playNote(int numKey, double playTime)
+double Piano::playNote(int mNumKey, double mPlayTime)
 {
     /*
     std::cout << "what key would you like to play? (insert key number)\n";
@@ -250,7 +259,9 @@ double Piano::playNote(int numKey, double playTime)
     std::cout << "how long would you like to play the note? (insert time in ms)\n";
     std::cin >> playTime;
     */
-    return playTime * numKey;
+    this->notePlayed = mPlayTime * mNumKey;
+    std::cout << "now playing note " << notePlayed << "\n";
+    return notePlayed;
 }
 
 int Piano::muteNote(bool playOrMute, bool stringPadOn)
@@ -308,6 +319,7 @@ struct WaveGenerator
     double modulator = 24.5;
     std::string title = "Wave Generator 1";
     double filter = 35.75;
+    double mSineWaveFreq = 440;
 
     WaveGenerator();
     ~WaveGenerator();
@@ -330,7 +342,8 @@ WaveGenerator::~WaveGenerator()
 
 void WaveGenerator::genSineWave(double sineWaveFreq, int oscillator)
 {
-    std::cout << "sine wave frequency is: " << sineWaveFreq * oscillator << "\n";
+    this->mSineWaveFreq = sineWaveFreq * oscillator;
+    std::cout << "sine wave frequency is: " << mSineWaveFreq << "\n";
 }
 
 double WaveGenerator::waveMod(int waveModType, std::string waveModName)
@@ -376,6 +389,10 @@ struct GymChain
     Gym gym;
     Gym::Member member1;
     Gym::Member member2;
+    int gymCounter = 1;
+    int mChainLocations = 10;
+    int mFranchiseLocations = 17;
+
     GymChain();
     ~GymChain();
 
@@ -395,8 +412,9 @@ GymChain::~GymChain()
 
 int GymChain::gymChainCounter(int chainLocations, int franchiseLocations)
 {
-    std::cout << "the total number of locations in the chain is: " << chainLocations + franchiseLocations << "\n";
-    return chainLocations + franchiseLocations;
+    this->gymCounter = chainLocations + franchiseLocations;
+    std::cout << "the total number of locations in the chain is: " << gymCounter << "\n";
+    return gymCounter;
 }
 
 double GymChain::profitForecast(int totalGymLocations, int membershipPrice, int totalMembers)
@@ -415,7 +433,10 @@ struct Synthesizer
 {
     Piano piano;
     WaveGenerator oscillator;
-    WaveGenerator lfo;
+    float lfo;
+    float mParam1 = 10.0f;
+    float mParam2 = 13.3f;
+    float mParam3 = 3.7f;
     Synthesizer();
     ~Synthesizer();
 
@@ -435,12 +456,13 @@ Synthesizer::~Synthesizer()
 
 void Synthesizer::playNote(int noteLength, int frequency)
 {
-    std::cout << "now playing a note at " << frequency << "hz, for " << noteLength << "ms.\n enjoy! \n";
+    std::cout << "now playing a note at " << frequency << "hz, for " << noteLength << "ms.\n" << "enjoy! \n";
 }
 
 float Synthesizer::modulate(float param1, float param2, float param3)
 {
-    std::cout << "modulating the signal now! \n";
+    this->lfo = param1 * param2 * param3;
+    std::cout << "modulating the signal now at: " << lfo << "hz \n";
     return param1 * param2 / param3;
 }
 
@@ -465,10 +487,12 @@ int main()
     crushIt.setPersonalTrainer("chuck", 2.5f, 1000);
     Gym::Member example;
     crushIt.sellMonthlyPass(example, 29.99, 6);
-    std::cout << "average user number is: " << crushIt.getUserFreq(45, 30) << "\n";
+    std::cout << "average user number is: " << crushIt.getUserFreq(45, 30) << ", today there were: " << crushIt.mNumDailyPeople << "\n";
+    crushIt.printUserFreq();
     crushIt.checkIncome(34, 30, 24.99);
     
     Gym::Member patron;
+    std::cout << "you have " << patron.passesLeft << " passes left!\n";
     patron.punchPass(5);
     patron.bringAFriend(true, 4);
     patron.giveReward(1, "10% Discount", 10);
@@ -476,22 +500,26 @@ int main()
     
     Piano grandPiano;
     grandPiano.volumeDown(false, 1);
+    std::cout << "now playing note " << grandPiano.numKey * grandPiano.playTime << "\n";
     grandPiano.playNote(40, 42.25);
     grandPiano.muteNote(false, false);
-    grandPiano.arpeggio(40, 24, 3);
+    grandPiano.arpeggio(40, 4, 1);
     
     WaveGenerator waveGen;
+    std::cout << "sine wave frequency is: " << waveGen.mSineWaveFreq * waveGen.mOscillator << "\n";
     waveGen.genSineWave(250, 3);
     waveGen.waveMod(4, "Ring");
     waveGen.waveFilter(500, 2, 18.0);
     waveGen.distort(500, 20000, 3);
-
+    
     GymChain powerHour;
-    powerHour.gymChainCounter(50, 25);
     powerHour.profitForecast(75, 50, 10000);
-
+    std::cout << "the total number of locations in the chain is: " << powerHour.mChainLocations + powerHour.mFranchiseLocations << "\n";
+    powerHour.gymChainCounter(50, 25);
+    
     Synthesizer synth;
     synth.playNote(50, 440);
+    std::cout << "modulating the signal now at: " << synth.mParam1 * synth.mParam2 * synth.mParam3 << "hz \n";
     synth.modulate(10.0, 25.0, 3.5);
     
     std::cout << "good to go!" << std::endl;
